@@ -50,7 +50,36 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    # check if there is no empty places on board
+    board_1d = flat_board(board)
+    if None not in board_1d:
+        return True
+
+    # check winning conditions
+    # winning rows
+    winning_threes = board[:]
+    # winning columns
+    for i in range(3):
+        three = []
+        for row in board:
+            three.append(row[i])
+        winning_threes.append(three)
+    # winning diagonals
+    winning_threes.append([board[0][0], board[1][1], board[2][2]])
+    winning_threes.append([board[0][2], board[1][1], board[2][0]])
+
+    # check for three in a row
+    for three in winning_threes:
+        three_set = set(three)
+        if len(three_set) == 1 and None not in three_set:
+            return True
+
+    return False
+
+
+def flat_board(board):
+    board_1d = [elem for row in board for elem in row]
+    return board_1d
 
 
 def utility(board):
