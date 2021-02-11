@@ -92,8 +92,9 @@ def terminal(board):
 
     # check for three in a row
     for three in winning_threes:
-        three_set = set(three)
-        if len(three_set) == 1 and None not in three_set:
+        if None in three:
+            continue
+        if len(set(three)) == 1:
             return True
 
     return False
