@@ -38,7 +38,12 @@ def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    raise NotImplementedError
+    possible_actions = set()
+    for i in range(2):
+        for j in range(2):
+            if board[i][j] is None:
+                possible_actions.add((i, j))
+    return possible_actions
 
 
 def result(board, action):
