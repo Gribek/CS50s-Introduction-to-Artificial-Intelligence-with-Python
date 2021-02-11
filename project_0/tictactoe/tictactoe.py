@@ -65,7 +65,17 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    raise NotImplementedError
+    # get list of winning rows
+    threes = winning_threes(board)
+
+    # check for the winner
+    for three in threes:
+        if None in three:
+            continue
+        if len(set(three)) == 1:
+            return three[0]
+
+    return None
 
 
 def terminal(board):
