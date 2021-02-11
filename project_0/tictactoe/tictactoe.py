@@ -77,27 +77,32 @@ def terminal(board):
     if None not in board_1d:
         return True
 
-    # check winning conditions
-    # winning rows
-    winning_threes = board[:]
-    # winning columns
-    for i in range(3):
-        three = []
-        for row in board:
-            three.append(row[i])
-        winning_threes.append(three)
-    # winning diagonals
-    winning_threes.append([board[0][0], board[1][1], board[2][2]])
-    winning_threes.append([board[0][2], board[1][1], board[2][0]])
+    # get list of vertical, horizontal and diagonal rows
+    threes = winning_threes(board)
 
     # check for three in a row
-    for three in winning_threes:
+    for three in threes:
         if None in three:
             continue
         if len(set(three)) == 1:
             return True
 
     return False
+
+
+def winning_threes(board):
+    # winning rows
+    threes = board[:]
+    # winning columns
+    for i in range(3):
+        three = []
+        for row in board:
+            three.append(row[i])
+        threes.append(three)
+    # winning diagonals
+    threes.append([board[0][0], board[1][1], board[2][2]])
+    threes.append([board[0][2], board[1][1], board[2][0]])
+    return threes
 
 
 def flat_board(board):
