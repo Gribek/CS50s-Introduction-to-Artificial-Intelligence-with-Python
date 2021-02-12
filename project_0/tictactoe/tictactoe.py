@@ -138,7 +138,28 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    # Check if current state is a terminal state
+    if terminal(board):
+        return None
+
+    # Check current player
+    current_player = player(board)
+    # Create a dict with moves and values of the resulting states
+    moves = {}
+
+    # Find the optimal move
+    # MAX player
+    if current_player == X:
+        for action in actions(board):
+            moves[action] = min_value(result(board, action))
+        optimal_move = max(moves, key=moves.get)
+    # MIN player
+    else:
+        for action in actions(board):
+            moves[action] = max_value(result(board, action))
+        optimal_move = min(moves, key=moves.get)
+
+    return optimal_move
 
 
 def max_value(state):
