@@ -89,7 +89,7 @@ def terminal(board):
         return True
 
     # get list of vertical, horizontal and diagonal rows
-    threes = winning_threes(board)
+    threes = winning_threes(board)  # TODO: refactor part below, user winner function
 
     # check for three in a row
     for three in threes:
@@ -125,10 +125,10 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    game_result = winner(board)
-    if game_result == X:
+    game_winner = winner(board)
+    if game_winner == X:
         return 1
-    elif game_result == O:
+    elif game_winner == O:
         return -1
     else:
         return 0
