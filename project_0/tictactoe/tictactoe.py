@@ -83,20 +83,15 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    # check if there is no empty places on board
+    # check if there are empty places on board
     board_1d = flat_board(board)
     if None not in board_1d:
         return True
 
-    # get list of vertical, horizontal and diagonal rows
-    threes = winning_threes(board)  # TODO: refactor part below, user winner function
-
-    # check for three in a row
-    for three in threes:
-        if None in three:
-            continue
-        if len(set(three)) == 1:
-            return True
+    # check if there is a winner of the game
+    game_winner = winner(board)
+    if game_winner is not None:
+        return True
 
     return False
 
