@@ -192,20 +192,7 @@ class MinesweeperAI():
         self.mark_safe(cell)
 
         # Add a new sentence to the AI's knowledge base
-        cells = set()
-        for i in range(cell[0] - 1, cell[0] + 2):
-            for j in range(cell[1] - 1, cell[1] + 2):
-                if i < 0 or j < 0 or i >= self.height or j >= self.width:
-                    continue
-                if (i, j) == cell:
-                    continue
-                if (i, j) in self.safes:
-                    continue
-                if (i, j) in self.mines:
-                    count -= 1
-                    continue
-                cells.add((i, j))
-        self.knowledge.append(Sentence(cells, count))
+        self.new_sentence(cell, count)
 
         # Search for new inferences that can be draw from
         # the current AI's knowledge base
@@ -250,6 +237,25 @@ class MinesweeperAI():
             # Break if knowledge base has not been changed
             if not knowledge_changed:
                 break
+
+    def new_sentence(self, cell, count):
+        """
+        Add a new sentence to the AI's knowledge base.
+        """
+        cells = set()
+        for i in range(cell[0] - 1, cell[0] + 2):
+            for j in range(cell[1] - 1, cell[1] + 2):
+                if i < 0 or j < 0 or i >= self.height or j >= self.width:
+                    continue
+                if (i, j) == cell:
+                    continue
+                if (i, j) in self.safes:
+                    continue
+                if (i, j) in self.mines:
+                    count -= 1
+                    continue
+                cells.add((i, j))
+        self.knowledge.append(Sentence(cells, count))
 
     def safe_fields_and_mines_check(self):
         """
