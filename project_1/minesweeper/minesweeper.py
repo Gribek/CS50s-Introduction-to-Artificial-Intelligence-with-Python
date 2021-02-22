@@ -287,7 +287,7 @@ class MinesweeperAI():
         # Get set of available moves
         save_moves = self.safes - self.moves_made
 
-        # Return arbitrary safe move if exist else None
+        # Return arbitrary safe move if the one exist else None
         return save_moves.pop() if save_moves else None
 
     def make_random_move(self):
@@ -297,4 +297,12 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        # Get a list of all cells in the game
+        possible_moves = [(i, j) for i in range(0, self.height) for j in
+                          range(0, self.width)]
+
+        # Create a set of moves without those already made and mines
+        available_moves = set(possible_moves) - self.moves_made - self.mines
+
+        # Return arbitrary move if the one exist else None
+        return available_moves.pop() if available_moves else None
