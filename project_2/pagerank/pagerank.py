@@ -1,3 +1,4 @@
+from decimal import Decimal
 import os
 import random
 import re
@@ -57,7 +58,18 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
+    probability_distribution = dict()
+    corpus_size = len(corpus)
+    links_number = len(corpus[page])
+    if links_number == 0:
+        damping_factor = 0
+    for elem in corpus:
+        value = (Decimal('1') - Decimal(f'{damping_factor}')) / corpus_size
+        if elem in corpus[page]:
+            value += Decimal(f'{damping_factor}') / links_number
+        probability_distribution[elem] = value
+
+    return probability_distribution
 
 
 def sample_pagerank(corpus, damping_factor, n):
