@@ -117,5 +117,29 @@ def iterate_pagerank(corpus, damping_factor):
     raise NotImplementedError
 
 
+def no_links_page(corpus):
+    """
+    Return edited corpus dictionary where all pages that had no
+    links at all now have one link to every page in the corpus.
+    """
+    return {key: (v if v else set(corpus)) for key, v in corpus.items()}
+
+
+def links_to_page(corpus):
+    """
+    Return dictionary mapping page name to a set of all pages
+    possessing link to that page.
+    """
+    result = dict()
+    for page in corpus:
+        links = set()
+        for key in corpus:
+            if page in corpus[key]:
+                links.add(key)
+        result[page] = links
+
+    return result
+
+
 if __name__ == "__main__":
     main()
