@@ -67,7 +67,7 @@ def transition_model(corpus, page, damping_factor):
         value = (Decimal('1') - Decimal(f'{damping_factor}')) / corpus_size
         if elem in corpus[page]:
             value += Decimal(f'{damping_factor}') / links_number
-        probability_distribution[elem] = value
+        probability_distribution[elem] = float(value)
 
     return probability_distribution
 
