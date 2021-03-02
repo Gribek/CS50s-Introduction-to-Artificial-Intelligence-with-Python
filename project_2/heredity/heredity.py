@@ -38,7 +38,6 @@ PROBS = {
 
 
 def main():
-
     # Check for proper usage
     if len(sys.argv) != 2:
         sys.exit("Usage: python heredity.py data.csv")
@@ -76,7 +75,6 @@ def main():
         # Loop over all sets of people who might have the gene
         for one_gene in powerset(names):
             for two_genes in powerset(names - one_gene):
-
                 # Update probabilities with new joint probability
                 p = joint_probability(people, one_gene, two_genes, have_trait)
                 update(probabilities, one_gene, two_genes, have_trait, p)
@@ -139,7 +137,63 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
-    raise NotImplementedError
+    probability = 1
+
+    # Calculate probability for each person
+    for person, person_data in people.items():
+
+        # Get information about a person
+        mutated_gene_copies = count_genes(person, one_gene, two_genes)
+        father = person_data['father']
+        mother = person_data['mother']
+
+        # Calculate for a person with no record about parents
+        if mother is None and father is None:
+            p = PROBS['gene'][mutated_gene_copies]
+
+        # Calculate for a person whose parents are known
+        else:
+            # Get number of mutated genes for father and mother
+            father_genes = count_genes(father, one_gene, two_genes)
+            mother_genes = count_genes(mother, one_gene, two_genes)
+
+            # Calculate based on a number of mutated genes
+            if mutated_gene_copies == 0:
+                p = (parent_probability(father_genes, pass_mutated=False)
+                     * parent_probability(mother_genes, pass_mutated=False))
+            elif mutated_gene_copies == 2:
+                p = (parent_probability(father_genes, pass_mutated=True)
+                     * parent_probability(mother_genes, pass_mutated=True))
+            else:
+                p = (parent_probability(father_genes, pass_mutated=True)
+                     * parent_probability(mother_genes, pass_mutated=False)
+                     + parent_probability(father_genes, pass_mutated=False)
+                     * parent_probability(mother_genes, pass_mutated=True))
+
+        # Include conditional probability of having the trait
+        p *= PROBS['trait'][mutated_gene_copies][person in have_trait]
+
+        # Calculate joint probability
+        probability *= p
+
+    return probability
+
+
+def parent_probability(genes_count, pass_mutated):
+    prob_distribution = {0: 0.01, 1: 0.5, 2: 0.99}
+    if pass_mutated:
+        return prob_distribution[genes_count]
+    else:
+        return 1 - prob_distribution[genes_count]
+
+
+def count_genes(person, one_gene, two_genes):
+    if person in one_gene:
+        return 1
+    elif person in two_genes:
+        return 2
+    else:
+        return 0
 
 
 def update(probabilities, one_gene, two_genes, have_trait, p):
