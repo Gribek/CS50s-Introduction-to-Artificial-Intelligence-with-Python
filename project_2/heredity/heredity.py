@@ -180,6 +180,9 @@ def joint_probability(people, one_gene, two_genes, have_trait):
 
 
 def parent_probability(genes_count, pass_mutated):
+    """
+    Return a probability of passing mutated/non-mutated trait.
+    """
     prob_distribution = {0: 0.01, 1: 0.5, 2: 0.99}
     if pass_mutated:
         return prob_distribution[genes_count]
@@ -188,6 +191,9 @@ def parent_probability(genes_count, pass_mutated):
 
 
 def count_genes(person, one_gene, two_genes):
+    """
+    Return a number of mutated gene copies.
+    """
     if person in one_gene:
         return 1
     elif person in two_genes:
