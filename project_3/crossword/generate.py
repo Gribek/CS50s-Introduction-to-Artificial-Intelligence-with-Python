@@ -167,7 +167,10 @@ class CrosswordCreator():
                 return False
 
         # Check that there are no conflicts between neighboring variables
-        for (x, y), (i, j) in self.crossword.overlaps.items():
+        assignment_overlaps = {key: value for key, value in
+                               self.crossword.overlaps.items() if
+                               key in assignment and value is not None}
+        for (x, y), (i, j) in assignment_overlaps.items():
             if assignment[x][i] != assignment[y][j]:
                 return False
 
