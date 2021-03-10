@@ -209,7 +209,11 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        raise NotImplementedError
+        unassigned_variables = [v for v in self.domains if v not in assignment]
+        unassigned_variables.sort(
+            key=lambda v: [len(self.domains[v]),
+                           -(len(self.crossword.neighbors))])
+        return unassigned_variables[0]
 
     def backtrack(self, assignment):
         """
