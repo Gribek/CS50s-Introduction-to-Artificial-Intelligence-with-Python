@@ -189,6 +189,10 @@ class CrosswordCreator():
         return words
 
     def sort_function(self, word, var, neighbours):
+        """
+        Calculate the number of rolled out values for neighbouring
+        variables by assigning the given word to the variable var.
+        """
         counter = 0
         for neighbour in neighbours:
             i, j = self.crossword.overlaps[var, neighbour]
