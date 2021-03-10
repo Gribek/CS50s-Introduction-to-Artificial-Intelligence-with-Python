@@ -215,7 +215,7 @@ class CrosswordCreator():
         unassigned_variables = [v for v in self.domains if v not in assignment]
         unassigned_variables.sort(
             key=lambda v: [len(self.domains[v]),
-                           -(len(self.crossword.neighbors))])
+                           -(len(self.crossword.neighbors(v)))])
         return unassigned_variables[0]
 
     def backtrack(self, assignment):
