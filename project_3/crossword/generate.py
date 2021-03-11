@@ -99,7 +99,10 @@ class CrosswordCreator():
         (Remove any values that are inconsistent with a variable's unary
          constraints; in this case, the length of the word.)
         """
-        raise NotImplementedError
+        for var, words in self.domains.items():
+            for word in words.copy():
+                if var.length != len(word):
+                    self.domains[var].remove(word)
 
     def revise(self, x, y):
         """
@@ -110,7 +113,16 @@ class CrosswordCreator():
         Return True if a revision was made to the domain of `x`; return
         False if no revision was made.
         """
-        raise NotImplementedError
+        domain_modified = False
+        overlap = self.crossword.overlaps.get((x, y))
+        if overlap:
+            for x_word in self.domains[x].copy():
+                if not any(x_word[overlap[0]] == y_word[overlap[1]]
+                           for y_word in self.domains[y]):
+                    self.domains[x].remove(x_word)
+                    domain_modified = True
+
+        return domain_modified
 
     def ac3(self, arcs=None):
         """
@@ -121,21 +133,49 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+        if arcs is None:
+            arcs = list(self.crossword.overlaps.keys())
+        while arcs:
+            x, y = arcs.pop(0)
+            if self.revise(x, y):
+                if not self.domains[x]:
+                    return False
+                for z in self.crossword.neighbors(x) - {y}:
+                    arcs.append((z, x))
+        return True
 
     def assignment_complete(self, assignment):
         """
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-        raise NotImplementedError
+        return len(self.domains) == len(assignment)
 
     def consistent(self, assignment):
         """
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
         """
-        raise NotImplementedError
+        # Check that all values are distinct
+        assigned_values = [v for v in assignment.values() if v is not None]
+        if len(assigned_values) != len(set(assigned_values)):
+            return False
+
+        # Check that every value is the correct length
+        for var, value in assignment.items():
+            if var.length != len(value):
+                return False
+
+        # Check that there are no conflicts between neighboring variables
+        assignment_overlaps = {key: value for key, value in
+                               self.crossword.overlaps.items() if
+                               value is not None and
+                               key[0] in assignment and key[1] in assignment}
+        for (x, y), (i, j) in assignment_overlaps.items():
+            if assignment[x][i] != assignment[y][j]:
+                return False
+
+        return True
 
     def order_domain_values(self, var, assignment):
         """
@@ -144,7 +184,26 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        raise NotImplementedError
+        neighbours_unassigned = [n for n in self.crossword.neighbors(var)
+                                 if n not in assignment]
+        words = sorted(
+            self.domains[var],
+            key=lambda w: self.sort_function(w, var, neighbours_unassigned))
+
+        return words
+
+    def sort_function(self, word, var, neighbours):
+        """
+        Calculate the number of rolled out values for neighbouring
+        variables by assigning the given word to the variable var.
+        """
+        counter = 0
+        for neighbour in neighbours:
+            i, j = self.crossword.overlaps[var, neighbour]
+            for option in self.domains[neighbour]:
+                if word[i] != option[j]:
+                    counter += 1
+        return counter
 
     def select_unassigned_variable(self, assignment):
         """
@@ -154,7 +213,11 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
-        raise NotImplementedError
+        unassigned_variables = [v for v in self.domains if v not in assignment]
+        unassigned_variables.sort(
+            key=lambda v: [len(self.domains[v]),
+                           -(len(self.crossword.neighbors(v)))])
+        return unassigned_variables[0]
 
     def backtrack(self, assignment):
         """
@@ -165,11 +228,35 @@ class CrosswordCreator():
 
         If no assignment is possible, return None.
         """
-        raise NotImplementedError
+        # Check that assignment is complete
+        if self.assignment_complete(assignment):
+            return assignment
+
+        # Try to assign a new variable
+        var = self.select_unassigned_variable(assignment)
+        for value in self.order_domain_values(var, assignment):
+            new_assignment = assignment.copy()
+            current_domains = self.domains.copy()
+            new_assignment[var] = value
+            if self.consistent(new_assignment):
+                if not self.inference(var, new_assignment):
+                    self.domains = current_domains
+                    continue
+                result = self.backtrack(new_assignment)
+                if result is not None:
+                    return result
+        return None
+
+    def inference(self, var, assignment):
+        """
+        Enforce arc consistency after making a new assignment.
+        """
+        self.domains[var] = {assignment[var]}
+        arcs = [(x, var) for x in self.crossword.neighbors(var)]
+        return self.ac3(arcs=arcs)
 
 
 def main():
-
     # Check usage
     if len(sys.argv) not in [3, 4]:
         sys.exit("Usage: python generate.py structure words [output]")
