@@ -236,12 +236,24 @@ class CrosswordCreator():
         var = self.select_unassigned_variable(assignment)
         for value in self.order_domain_values(var, assignment):
             new_assignment = assignment.copy()
+            current_domains = self.domains.copy()
             new_assignment[var] = value
             if self.consistent(new_assignment):
+                if not self.inference(var, new_assignment):
+                    self.domains = current_domains
+                    continue
                 result = self.backtrack(new_assignment)
                 if result is not None:
                     return result
         return None
+
+    def inference(self, var, assignment):
+        """
+        Enforce arc consistency after making a new assignment.
+        """
+        self.domains[var] = {assignment[var]}
+        arcs = [(x, var) for x in self.crossword.neighbors(var)]
+        return self.ac3(arcs=arcs)
 
 
 def main():
