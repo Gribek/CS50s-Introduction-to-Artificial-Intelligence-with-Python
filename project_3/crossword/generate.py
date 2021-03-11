@@ -185,7 +185,7 @@ class CrosswordCreator():
         that rules out the fewest values among the neighbors of `var`.
         """
         neighbours_unassigned = [n for n in self.crossword.neighbors(var)
-                                 if var not in assignment]
+                                 if n not in assignment]
         words = sorted(
             self.domains[var],
             key=lambda w: self.sort_function(w, var, neighbours_unassigned))
