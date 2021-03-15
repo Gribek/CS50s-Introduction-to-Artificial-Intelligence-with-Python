@@ -62,7 +62,7 @@ def load_data(filename):
     evidence = []
     labels = []
 
-    with open('shopping.csv') as csv_file:
+    with open(filename) as csv_file:
         csv_reader = csv.reader(csv_file)
         headers = csv_reader.__next__()
         month_abbr = {month: index - 1 for index, month in
