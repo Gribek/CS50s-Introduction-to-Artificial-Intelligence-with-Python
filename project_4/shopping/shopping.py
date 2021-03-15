@@ -1,3 +1,4 @@
+import calendar
 import csv
 import sys
 
@@ -8,7 +9,6 @@ TEST_SIZE = 0.4
 
 
 def main():
-
     # Check command-line arguments
     if len(sys.argv) != 2:
         sys.exit("Usage: python shopping.py data")
@@ -59,7 +59,44 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    evidence = []
+    labels = []
+
+    with open('shopping.csv') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        headers = csv_reader.__next__()
+        month_abbr = {month: index - 1 for index, month in
+                      enumerate(calendar.month_abbr) if month}
+        for row in csv_reader:
+            evidence_data = row[:-1]
+
+            for header in ['Administrative', 'Informational', 'ProductRelated',
+                           'OperatingSystems', 'Browser', 'Region',
+                           'TrafficType']:
+                i = headers.index(header)
+                evidence_data[i] = int(evidence_data[i])
+
+            for header in ['Administrative_Duration', 'Informational_Duration',
+                           'ProductRelated_Duration', 'BounceRates',
+                           'ExitRates',
+                           'PageValues', 'SpecialDay']:
+                i = headers.index(header)
+                evidence_data[i] = float(evidence_data[i])
+
+            i = headers.index('Month')
+            evidence_data[i] = month_abbr[evidence_data[i][:3]]
+
+            i = headers.index('VisitorType')
+            evidence_data[i] = (
+                1 if evidence_data[i] == 'Returning_Visitor' else 0)
+
+            i = headers.index('Weekend')
+            evidence_data[i] = 1 if evidence_data[i].lower() == 'true' else 0
+
+            evidence.append(evidence_data)
+            labels.append(1 if row[-1].lower() == 'true' else 0)
+
+    return evidence, labels
 
 
 def train_model(evidence, labels):
