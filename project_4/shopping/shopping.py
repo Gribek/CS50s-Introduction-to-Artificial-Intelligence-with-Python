@@ -126,8 +126,8 @@ def evaluate(labels, predictions):
     """
     positive_count = 0
     negative_count = 0
-    for index, label in enumerate(labels):
-        if label == predictions[index]:
+    for prediction, label in zip(predictions, labels):
+        if label == prediction:
             if label:
                 positive_count += 1
             else:
