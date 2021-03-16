@@ -133,7 +133,7 @@ class NimAI():
         `state`, return 0.
         """
         actions = Nim.available_actions(state)
-        return max((self.q.get((tuple(state), a), default=0) for a in actions),
+        return max((self.q.get((tuple(state), a), 0) for a in actions),
                    default=0)
 
     def choose_action(self, state, epsilon=True):
