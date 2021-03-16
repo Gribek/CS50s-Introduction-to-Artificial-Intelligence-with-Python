@@ -78,8 +78,7 @@ def load_data(filename):
 
             for header in ['Administrative_Duration', 'Informational_Duration',
                            'ProductRelated_Duration', 'BounceRates',
-                           'ExitRates',
-                           'PageValues', 'SpecialDay']:
+                           'ExitRates', 'PageValues', 'SpecialDay']:
                 i = headers.index(header)
                 evidence_data[i] = float(evidence_data[i])
 
