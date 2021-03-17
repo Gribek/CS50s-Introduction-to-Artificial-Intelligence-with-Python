@@ -14,7 +14,6 @@ TEST_SIZE = 0.4
 
 
 def main():
-
     # Check command-line arguments
     if len(sys.argv) not in [2, 3]:
         sys.exit("Usage: python traffic.py data_directory [model.h5]")
@@ -35,7 +34,7 @@ def main():
     model.fit(x_train, y_train, epochs=EPOCHS)
 
     # Evaluate neural network performance
-    model.evaluate(x_test,  y_test, verbose=2)
+    model.evaluate(x_test, y_test, verbose=2)
 
     # Save model to file
     if len(sys.argv) == 3:
@@ -58,7 +57,21 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
-    raise NotImplementedError
+    images = []
+    labels = []
+
+    for category in range(NUM_CATEGORIES):
+        subdir_path = os.path.join(data_dir, str(category))
+        img_files = os.listdir(subdir_path)
+        for img in img_files:
+            img_path = os.path.join(subdir_path, img)
+            img = cv2.imread(img_path)
+            img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT),
+                             interpolation=cv2.INTER_AREA)
+            images.append(img)
+            labels.append(category)
+
+    return images, labels
 
 
 def get_model():
