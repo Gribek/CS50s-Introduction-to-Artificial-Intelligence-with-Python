@@ -80,21 +80,34 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
+    # Create a convolutional neural network
     model = tf.keras.models.Sequential([
+
+        # 1st convolutional layer
         tf.keras.layers.Conv2D(32, (3, 3), activation='relu',
                                input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
 
-        tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
-        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+        # 1st max-pooling layer
         tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
 
+        # 2nd convolutional layer
+        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+
+        # 2nd max-pooling layer
+        tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+
+        # Flatten input
         tf.keras.layers.Flatten(),
 
+        # Hidden layer with dropout
         tf.keras.layers.Dense(128, activation='relu'),
         tf.keras.layers.Dropout(0.3),
 
+        # Output layer with one unit for each category
         tf.keras.layers.Dense(NUM_CATEGORIES, activation='softmax')
     ])
+
+    # Compile the model
     model.compile(
         optimizer='adam',
         loss='categorical_crossentropy',
