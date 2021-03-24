@@ -81,7 +81,11 @@ def np_chunk(tree):
     whose label is "NP" that does not itself contain any other
     noun phrases as subtrees.
     """
-    raise NotImplementedError
+    np_chunks = []
+    for el in tree.subtrees():
+        if el.label() == 'NP' and 'NP' not in (child.label() for child in el):
+            np_chunks.append(el)
+    return np_chunks
 
 
 if __name__ == "__main__":
