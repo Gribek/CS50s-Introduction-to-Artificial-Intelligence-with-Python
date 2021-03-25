@@ -1,3 +1,4 @@
+import os
 import nltk
 import sys
 
@@ -48,7 +49,12 @@ def load_files(directory):
     Given a directory name, return a dictionary mapping the filename of each
     `.txt` file inside that directory to the file's contents as a string.
     """
-    raise NotImplementedError
+    files_dict = {}
+    files = os.listdir(directory)
+    for file in files:
+        with open(os.path.join(directory, file)) as f:
+            files_dict[file] = f.read()
+    return files_dict
 
 
 def tokenize(document):
