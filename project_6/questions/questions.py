@@ -1,5 +1,6 @@
 import os
 import nltk
+import string
 import sys
 
 FILE_MATCHES = 1
@@ -7,7 +8,6 @@ SENTENCE_MATCHES = 1
 
 
 def main():
-
     # Check command-line arguments
     if len(sys.argv) != 2:
         sys.exit("Usage: python questions.py corpus")
@@ -65,7 +65,11 @@ def tokenize(document):
     Process document by coverting all words to lowercase, and removing any
     punctuation or English stopwords.
     """
-    raise NotImplementedError
+    words = nltk.word_tokenize(text=document)
+    stopwords = nltk.corpus.stopwords.words('english')
+    x = [word.lower() for word in words if
+            word not in string.punctuation and word not in stopwords]
+    return x
 
 
 def compute_idfs(documents):
