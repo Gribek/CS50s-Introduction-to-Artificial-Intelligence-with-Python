@@ -117,7 +117,24 @@ def top_sentences(query, sentences, idfs, n):
     the query, ranked according to idf. If there are ties, preference should
     be given to sentences that have a higher query term density.
     """
-    raise NotImplementedError
+    idf = {sentence: 0 for sentence in sentences}
+    for word in query:
+        if word not in idfs:
+            continue
+        for sentence, words in sentences.items():
+            if word not in words:
+                continue
+            idf[sentence] += idfs[word]
+    return sorted(sentences,
+                  key=lambda s: (idf[s], calc_qtr(query, sentences[s])),
+                  reverse=True)[:n]
+
+
+def calc_qtr(query, sentence):
+    """
+    Given a query and a sentence calculate query term density.
+    """
+    return len([word for word in sentence if word in query]) / len(sentence)
 
 
 if __name__ == "__main__":
