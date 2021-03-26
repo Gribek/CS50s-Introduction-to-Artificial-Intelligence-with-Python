@@ -4,7 +4,7 @@ import nltk
 import string
 import sys
 
-FILE_MATCHES = 1
+FILE_MATCHES = 4
 SENTENCE_MATCHES = 1
 
 
